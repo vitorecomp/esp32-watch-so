@@ -1,23 +1,22 @@
 #include "system/system.hpp"
 
-#include <Adafruit_GFX.h>  // Core graphics library by Adafruit
-#include <Adafruit_NeoPixel.h>
-#include <Arduino.h>
-#include <Arduino_ST7789.h>	 // Hardware-specific library for ST7789 (with or without CS pin)
-#include <SPI.h>
 #include <stdio.h>
 
+#include "app/app.hpp"
+#include "driver/connection/connection-interface.hpp"
+#include "driver/input/input-interface.hpp"
+#include "driver/output/output-interface.hpp"
 #include "esp_spi_flash.h"
 #include "esp_system.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-void start();
-void lookButton();
 
-void MainSystem::init() {
-	printf("Hello world!\n");
+MainSystem::MainSystem(Config* config) {
+	this->config = config;
+}
 
+void MainSystem::printSystemInfo() {
 	/* Print chip information */
 	esp_chip_info_t chip_info;
 	esp_chip_info(&chip_info);
@@ -30,21 +29,71 @@ void MainSystem::init() {
 	printf("%dMB %s flash\n", spi_flash_get_chip_size() / (1024 * 1024),
 		   (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" :
 														   "external");
-
-	for (int i = 10; i >= 0; i--) {
-		printf("Wait to restarting in %d seconds...\n", i);
-		vTaskDelay(1000 / portTICK_PERIOD_MS);
-	}
-	start();
-	for (int i = 0; i < 20000; i++) {
-		lookButton();
-		vTaskDelay(10 / portTICK_PERIOD_MS);
-	}
-
-	printf("Restarting now.\n");
-	fflush(stdout);
-	esp_restart();
 }
+
+void MainSystem::init() {
+	// TODO it the eventBus
+	printf("Initing the Watch\n");
+	this->printSystemInfo();
+	printf("Initing the event bus\n");
+	this->eventBus = new EventBus();
+
+
+	InputInterface** inputInterfaces = this->config->getInputInterfaces();
+	for (int i = 0; i < this->config->getInputInterfacesQt(); i++) {
+		inputInterfaces[i]->init();
+		inputInterfaces[i]->setEvents(this->eventBus);
+	}
+
+	OutputInterface** outPutInterfaces = this->config->getOutputInterfaces();
+	for (int i = 0; i < this->config->getOutputInterfacesQt(); i++) {
+		outPutInterfaces[i]->init();
+	}
+
+	ConnectionInterface** connectionInterfaces =
+		this->config->getConnectionInterfaces();
+	for (int i = 0; i < this->config->getConnectionInterfacesQt(); i++) {
+		connectionInterfaces[i]->init();
+		connectionInterfaces[i]->setEvents(this->eventBus);
+	}
+
+	App** apps = this->config->getApps();
+	for (int i = 0; i < this->config->getAppQt(); i++) {
+		apps[i]->init();
+		apps[i]->startThread();
+		apps[i]->enrollActiveEvents(this->eventBus);
+		apps[i]->enrollBackgroundEvents(this->eventBus);
+
+		apps[i]->setOutputInterface(outPutInterfaces);
+		apps[i]->setConnections(connectionInterfaces);
+	}
+
+	// start the scheduler
+	this->scheduler = new Scheduler(eventBus, apps);
+}
+
+#include <Adafruit_GFX.h>  // Core graphics library by Adafruit
+#include <Adafruit_NeoPixel.h>
+#include <Arduino.h>
+#include <Arduino_ST7789.h>	 // Hardware-specific library for ST7789 (with or without CS pin)
+#include <SPI.h>
+
+// for (int i = 10; i >= 0; i--) {
+// 	printf("Wait to restarting in %d seconds...\n", i);
+// 	vTaskDelay(1000 / portTICK_PERIOD_MS);
+// }
+// esp_restart();
+// start();
+// for (int i = 0; i < 20000; i++) {
+// 	lookButton();
+// 	vTaskDelay(10 / portTICK_PERIOD_MS);
+// }
+
+// printf("Restarting now.\n");
+// fflush(stdout);
+
+void start();
+void lookButton();
 
 #define TFT_DC 22
 #define TFT_RST 23
@@ -130,7 +179,7 @@ void testlines(uint16_t color) {
 	}
 }
 
-void testdrawtext(char *text, uint16_t color) {
+void testdrawtext(char* text, uint16_t color) {
 	tft.setCursor(0, 0);
 	tft.setTextColor(color);
 	tft.setTextWrap(true);

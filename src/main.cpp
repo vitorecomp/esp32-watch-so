@@ -4,10 +4,12 @@
 
  ****************************************************/
 
+#include "config/config.hpp"
 #include "system/system.hpp"
 
 void setup() {
-	MainSystem main;
+	Config config;
+	MainSystem main(&config);
 	main.init();
 }
 
