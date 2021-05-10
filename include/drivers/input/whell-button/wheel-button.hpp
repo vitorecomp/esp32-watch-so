@@ -5,7 +5,6 @@
 
 #include "driver/input/input-interface.hpp"
 
-typedef char int8_t;
 typedef unsigned char uint8_t;
 
 class WheelButton : InputInterface {
