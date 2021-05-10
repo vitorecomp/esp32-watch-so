@@ -12,16 +12,16 @@ class Config {
   public:
 	Config();
 	InputInterface** getInputInterfaces();
-	uint_8 getInputInterfacesQt();
+	uint_8 getInputInterfacesAmount();
 
 	OutputInterface** getOutputInterfaces();
-	uint_8 getOutputInterfacesQt();
+	uint_8 getOutputInterfacesAmount();
 
 	ConnectionInterface** getConnectionInterfaces();
-	uint_8 getConnectionInterfacesQt();
+	uint_8 getConnectionInterfacesAmount();
 
 	App** getApps();
-	uint_8 getAppQt();
+	uint_8 getAppAmount();
 };
 
 #endif

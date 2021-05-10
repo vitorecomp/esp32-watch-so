@@ -4,9 +4,13 @@
 #include "event-bus/event-bus.hpp"
 
 class InputInterface {
+	EventBus* eventBus;
+
   public:
+	InputInterface();
+
 	virtual void init();
-	virtual void setEvents(EventBus*);
+	void setEventBus(EventBus*);
 };
 
 #endif

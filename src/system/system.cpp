@@ -34,31 +34,41 @@ void MainSystem::printSystemInfo() {
 void MainSystem::init() {
 	// TODO it the eventBus
 	printf("Initing the Watch\n");
+
+	printf("Init ouput interfaces");
+	OutputInterface** outPutInterfaces = this->config->getOutputInterfaces();
+	for (int i = 0; i < this->config->getOutputInterfacesAmount(); i++) {
+		outPutInterfaces[i]->init();
+	}
+
+
 	this->printSystemInfo();
 	printf("Initing the event bus\n");
 	this->eventBus = new EventBus();
 
+	// TODO colocar aqui para inprimir na tela
+	// TODO mainsystem init here
+	// TODO clean screen
 
+	printf("Initing input interfaces\n");
 	InputInterface** inputInterfaces = this->config->getInputInterfaces();
-	for (int i = 0; i < this->config->getInputInterfacesQt(); i++) {
+	for (int i = 0; i < this->config->getInputInterfacesAmount(); i++) {
 		inputInterfaces[i]->init();
-		inputInterfaces[i]->setEvents(this->eventBus);
+		inputInterfaces[i]->setEventBus(this->eventBus);
 	}
 
-	OutputInterface** outPutInterfaces = this->config->getOutputInterfaces();
-	for (int i = 0; i < this->config->getOutputInterfacesQt(); i++) {
-		outPutInterfaces[i]->init();
-	}
 
+	printf("Init connection interfaces");
 	ConnectionInterface** connectionInterfaces =
 		this->config->getConnectionInterfaces();
-	for (int i = 0; i < this->config->getConnectionInterfacesQt(); i++) {
+	for (int i = 0; i < this->config->getConnectionInterfacesAmount(); i++) {
 		connectionInterfaces[i]->init();
-		connectionInterfaces[i]->setEvents(this->eventBus);
+		connectionInterfaces[i]->setEventBus(this->eventBus);
 	}
 
+	printf("Init apps");
 	App** apps = this->config->getApps();
-	for (int i = 0; i < this->config->getAppQt(); i++) {
+	for (int i = 0; i < this->config->getAppAmount(); i++) {
 		apps[i]->init();
 		apps[i]->startThread();
 		apps[i]->enrollActiveEvents(this->eventBus);
@@ -68,9 +78,20 @@ void MainSystem::init() {
 		apps[i]->setConnections(connectionInterfaces);
 	}
 
+	// delay 2 seconds
+	// clean the screen
+	// TODO make the app hour start
+
 	// start the scheduler
 	this->scheduler = new Scheduler(eventBus, apps);
 }
+
+// history
+// on center click open menu?? how?
+// put main menu on the main system
+// move the printf to main system, that will garanty the init screen
+
+// on button
 
 #include <Adafruit_GFX.h>  // Core graphics library by Adafruit
 #include <Adafruit_NeoPixel.h>
@@ -100,10 +121,6 @@ void lookButton();
 
 #define TFT_MOSI 17	 // for hardware SPI data pin (all of available pins)
 #define TFT_SCLK 16	 // for hardware SPI sclk pin (all of available pins)
-
-#define BUTTON_PRESS 18
-#define BUTTON_LEFT 5
-#define BUTTON_RIGHT 19
 
 #define PIXEL_PIN 33  // Digital IO pin connected to the NeoPixels.
 
@@ -503,9 +520,7 @@ void startShow(int i) {
 
 void start() {
 	//   Serial.begin(9600);
-	pinMode(BUTTON_PRESS, INPUT_PULLUP);
-	pinMode(BUTTON_LEFT, INPUT_PULLUP);
-	pinMode(BUTTON_RIGHT, INPUT_PULLUP);
+
 	pinMode(BUZZER, OUTPUT);
 
 	//   Serial.print("Hello! ST7789 TFT Test");
@@ -579,32 +594,4 @@ void start() {
 	delay(500);
 	//   strip.begin();
 	//   strip.show(); // Initialize all pixels to 'off'
-}
-
-void lookButton() {
-	if (digitalRead(BUTTON_LEFT) == LOW) {
-		soundone();
-	}
-	if (digitalRead(BUTTON_RIGHT) == LOW) {
-		soundtwo();
-	}
-	// Get current button state.
-	bool newState = digitalRead(BUTTON_PRESS);
-
-	// Check if state changed from high to low (button press).
-	if (newState == LOW && oldState == HIGH) {
-		// Short delay to debounce button.
-		delay(20);
-		// Check if button is still low after debounce.
-		newState = digitalRead(BUTTON_PRESS);
-		if (newState == LOW) {
-		}
-	}
-	//   showType++;
-	// if (showType > 6)
-	// 	showType=0;
-	// startShow(showType);
-
-	// Set the last button state to the old state.
-	oldState = newState;
 }

@@ -6,7 +6,7 @@
 class ConnectionInterface {
   public:
 	virtual void init();
-	virtual void setEvents(EventBus*);
+	virtual void setEventBus(EventBus*);
 };
 
 #endif

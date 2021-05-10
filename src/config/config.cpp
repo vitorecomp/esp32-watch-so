@@ -4,7 +4,7 @@ InputInterface** Config::getInputInterfaces() {
 	return nullptr;
 }
 
-uint_8 Config::getInputInterfacesQt() {
+uint_8 Config::getInputInterfacesAmount() {
 	return 0;
 }
 
@@ -12,7 +12,7 @@ OutputInterface** Config::getOutputInterfaces() {
 	return nullptr;
 }
 
-uint_8 Config::getOutputInterfacesQt() {
+uint_8 Config::getOutputInterfacesAmount() {
 	return 0;
 }
 
@@ -20,7 +20,7 @@ ConnectionInterface** Config::getConnectionInterfaces() {
 	return nullptr;
 }
 
-uint_8 Config::getConnectionInterfacesQt() {
+uint_8 Config::getConnectionInterfacesAmount() {
 	return 0;
 }
 
@@ -28,6 +28,6 @@ App** Config::getApps() {
 	return nullptr;
 }
 
-uint_8 Config::getAppQt() {
+uint_8 Config::getAppAmount() {
 	return 0;
 }
