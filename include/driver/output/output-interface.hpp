@@ -3,6 +3,7 @@
 
 class OutputInterface {
   public:
+	virtual const char* getName();
 	virtual void init();
 };
 

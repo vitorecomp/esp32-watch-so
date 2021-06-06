@@ -4,10 +4,13 @@
 #include "config/config.hpp"
 #include "event-bus/event-bus.hpp"
 #include "scheduler/scheduler.hpp"
+#include "terminal/terminal-app.hpp"
+
 class MainSystem {
   private:
 	Config *config;
 	EventBus *eventBus;
+	TerminalApp *terminalApp;
 	Scheduler *scheduler;
 
   private:

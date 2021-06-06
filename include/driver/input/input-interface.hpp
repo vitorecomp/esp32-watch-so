@@ -8,9 +8,10 @@ class InputInterface {
 
   public:
 	InputInterface();
-
-	virtual void init();
 	void setEventBus(EventBus*);
+
+	virtual const char* getName();
+	virtual void init();
 };
 
 #endif

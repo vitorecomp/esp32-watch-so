@@ -4,30 +4,27 @@ InputInterface** Config::getInputInterfaces() {
 	return nullptr;
 }
 
-uint_8 Config::getInputInterfacesAmount() {
-	return 0;
-}
 
 OutputInterface** Config::getOutputInterfaces() {
 	return nullptr;
 }
 
-uint_8 Config::getOutputInterfacesAmount() {
-	return 0;
-}
 
 ConnectionInterface** Config::getConnectionInterfaces() {
 	return nullptr;
 }
 
-uint_8 Config::getConnectionInterfacesAmount() {
-	return 0;
-}
-
-App** Config::getApps() {
+Screen* Config::getScreen() {
+	OutputInterface** interfaces = getOutputInterfaces();
+	for (uint_8 i = 0; i < getOutputInterfacesAmount(); i++) {
+		if (interfaces[i]->getName() == SCREEN_NAME) {
+			return (Screen*)interfaces[i];
+		}
+	}
 	return nullptr;
 }
 
-uint_8 Config::getAppAmount() {
-	return 0;
+
+App** Config::getApps() {
+	return nullptr;
 }

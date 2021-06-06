@@ -28,16 +28,15 @@ void MainSystem::printSystemInfo() {
 
 	printf("%dMB %s flash\n", spi_flash_get_chip_size() / (1024 * 1024),
 		   (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" :
-														   "external");
+															 "external");
 }
 
 void MainSystem::init() {
-	// TODO it the eventBus
 	printf("Initing the Watch\n");
 
 	printf("Init ouput interfaces");
 	OutputInterface** outPutInterfaces = this->config->getOutputInterfaces();
-	for (int i = 0; i < this->config->getOutputInterfacesAmount(); i++) {
+	for (uint_8 i = 0; i < this->config->getOutputInterfacesAmount(); i++) {
 		outPutInterfaces[i]->init();
 	}
 
@@ -45,14 +44,18 @@ void MainSystem::init() {
 	this->printSystemInfo();
 	printf("Initing the event bus\n");
 	this->eventBus = new EventBus();
+	this->terminalApp = new TerminalApp();
 
-	// TODO colocar aqui para inprimir na tela
-	// TODO mainsystem init here
-	// TODO clean screen
+	// mainsystem init
+	Screen* screen = this->config->getScreen();
+	this->terminalApp->setScreen(screen);
+	this->terminalApp->clear();
 
 	printf("Initing input interfaces\n");
+	this->terminalApp->printf("Initing input interfaces\n");
+
 	InputInterface** inputInterfaces = this->config->getInputInterfaces();
-	for (int i = 0; i < this->config->getInputInterfacesAmount(); i++) {
+	for (uint_8 i = 0; i < this->config->getInputInterfacesAmount(); i++) {
 		inputInterfaces[i]->init();
 		inputInterfaces[i]->setEventBus(this->eventBus);
 	}
@@ -61,14 +64,14 @@ void MainSystem::init() {
 	printf("Init connection interfaces");
 	ConnectionInterface** connectionInterfaces =
 		this->config->getConnectionInterfaces();
-	for (int i = 0; i < this->config->getConnectionInterfacesAmount(); i++) {
+	for (uint_8 i = 0; i < this->config->getConnectionInterfacesAmount(); i++) {
 		connectionInterfaces[i]->init();
 		connectionInterfaces[i]->setEventBus(this->eventBus);
 	}
 
 	printf("Init apps");
 	App** apps = this->config->getApps();
-	for (int i = 0; i < this->config->getAppAmount(); i++) {
+	for (uint_8 i = 0; i < this->config->getAppAmount(); i++) {
 		apps[i]->init();
 		apps[i]->startThread();
 		apps[i]->enrollActiveEvents(this->eventBus);
