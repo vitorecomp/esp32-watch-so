@@ -1,4 +1,4 @@
-#include "terminal/terminal-app.hpp";
+#include "terminal/terminal-app.hpp"
 
 void TerminalApp::setScreen(Screen *screen) {
 	this->screen = screen;

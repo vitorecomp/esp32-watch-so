@@ -25,10 +25,10 @@ class Screen : public OutputInterface, public Arduino_ST7789 {
 	void init();
 	const char* getName();
 
-	static const uint16_t WHITE_COLOR;
+	static const uint16_t WHITE_COLOR = WHITE;
 };
 
-const uint16_t Screen::WHITE_COLOR = WHITE;
+// const uint16_t Screen::WHITE_COLOR = WHITE;
 
 
 #endif

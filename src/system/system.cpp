@@ -89,6 +89,8 @@ void MainSystem::init() {
 	this->scheduler = new Scheduler(eventBus, apps);
 }
 
+
+/**
 // history
 // on center click open menu?? how?
 // put main menu on the main system
@@ -511,13 +513,12 @@ void startShow(int i) {
 		case 6:
 			theaterChase(strip.Color(0, 0, 127), 50);  // Blue
 			break;
-			/*
 		case 7: rainbow(20);
 				break;
 		case 8: rainbowCycle(20);
 				break;
 		case 9: theaterChaseRainbow(50);
-				break;*/
+				break;
 	}
 }
 
@@ -598,3 +599,4 @@ void start() {
 	//   strip.begin();
 	//   strip.show(); // Initialize all pixels to 'off'
 }
+**/
