@@ -13,6 +13,7 @@ class MainSystem {
 	TerminalApp *terminalApp;
 	Scheduler *scheduler;
 
+	char outputBuffer[256];
   private:
 	void printSystemInfo();
 

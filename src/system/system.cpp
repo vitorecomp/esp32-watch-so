@@ -1,6 +1,5 @@
 #include "system/system.hpp"
 
-#include <stdio.h>
 
 #include "app/app.hpp"
 #include "driver/connection/connection-interface.hpp"
@@ -16,33 +15,39 @@ MainSystem::MainSystem(Config* config) {
 	this->config = config;
 }
 
+
 void MainSystem::printSystemInfo() {
 	/* Print chip information */
 	esp_chip_info_t chip_info;
 	esp_chip_info(&chip_info);
-	printf("This is ESP32 chip with %d CPU cores, WiFi%s%s, ", chip_info.cores,
+	
+	sprintf(this->outputBuffer, "This is ESP32 chip with %d CPU cores, WiFi%s%s, ", chip_info.cores,
 		   (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
 		   (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
 
-	printf("silicon revision %d, ", chip_info.revision);
+	this->terminalApp->println(this->outputBuffer);
 
-	printf("%dMB %s flash\n", spi_flash_get_chip_size() / (1024 * 1024),
+	sprintf(this->outputBuffer, "This is ESP32 chip with %d CPU cores, WiFi%s%s, ", chip_info.cores,
+		   (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
+		   (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
+	
+	this->terminalApp->println(this->outputBuffer);
+
+	sprintf(this->outputBuffer, "silicon revision %d, ", chip_info.revision);
+	this->terminalApp->println(this->outputBuffer);
+
+	sprintf(this->outputBuffer, "%dMB %s flash\n", spi_flash_get_chip_size() / (1024 * 1024),
 		   (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" :
 															 "external");
+	this->terminalApp->println(this->outputBuffer);														
 }
 
 void MainSystem::init() {
-	printf("Initing the Watch\n");
-
-	printf("Init ouput interfaces");
 	OutputInterface** outPutInterfaces = this->config->getOutputInterfaces();
 	for (uint_8 i = 0; i < this->config->getOutputInterfacesAmount(); i++) {
 		outPutInterfaces[i]->init();
 	}
 
-
-	this->printSystemInfo();
-	printf("Initing the event bus\n");
 	this->eventBus = new EventBus();
 	this->terminalApp = new TerminalApp();
 
@@ -51,8 +56,9 @@ void MainSystem::init() {
 	this->terminalApp->setScreen(screen);
 	this->terminalApp->clear();
 
-	printf("Initing input interfaces\n");
-	this->terminalApp->printf("Initing input interfaces\n");
+	this->printSystemInfo();
+	
+	this->terminalApp->println("Initing input interfaces\n");
 
 	InputInterface** inputInterfaces = this->config->getInputInterfaces();
 	for (uint_8 i = 0; i < this->config->getInputInterfacesAmount(); i++) {
@@ -61,7 +67,7 @@ void MainSystem::init() {
 	}
 
 
-	printf("Init connection interfaces");
+	this->terminalApp->println("Init connection interfaces");
 	ConnectionInterface** connectionInterfaces =
 		this->config->getConnectionInterfaces();
 	for (uint_8 i = 0; i < this->config->getConnectionInterfacesAmount(); i++) {
@@ -69,7 +75,7 @@ void MainSystem::init() {
 		connectionInterfaces[i]->setEventBus(this->eventBus);
 	}
 
-	printf("Init apps");
+	this->terminalApp->println("Init apps");
 	App** apps = this->config->getApps();
 	for (uint_8 i = 0; i < this->config->getAppAmount(); i++) {
 		apps[i]->init();
