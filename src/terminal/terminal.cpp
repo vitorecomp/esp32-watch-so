@@ -8,11 +8,23 @@ void TerminalApp::clear() {
 	this->screen->fillScreen(BLACK);
 }
 
-void TerminalApp::printf(const char *text) {
-	// TODO control the posic here
-	// if the posic is bigger than screen, must move the screen down
-	screen->setCursor(0, 0);
+void TerminalApp::printLine(int posX, int posY, const char *text) {
+	screen->setCursor(posX, posY);
 	screen->setTextColor(screen->WHITE_COLOR);
 	screen->setTextSize(1);
-	screen->println(text);
+	if(strlen(text) > screen->width())
+		screen->println(text[0, screen->width()]);
+	else
+		screen->println(text);
+}
+
+void TerminalApp::println(const char *text) {
+	//break the text in multiple lines if bigger than screen width
+	int init = 0, end = screen->width();
+	while(end < strlen(text)){
+		printLine(this->posX, this->posY++, text + init);
+		init = end;
+		end += screen->width();
+	}
+	printLine(this->posX, this->posY++, text + init);
 }
