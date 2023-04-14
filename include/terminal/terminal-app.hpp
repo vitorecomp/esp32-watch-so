@@ -5,10 +5,20 @@
 
 
 class TerminalApp {
+  private:
+	static const int HIST_SIZE = 200;
 	Screen* screen;
-	int posX, posY;
+
+	int lastPosition = -1;
+	int histPosition = 0;
+
+	char **terminalMatrix;
 
 	void printLine(int posX, int posY, const char* text);
+	void printTerminal();
+
+void index(const char * text);
+	
   public:
 	void init();
 
